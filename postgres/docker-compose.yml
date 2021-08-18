@@ -1,0 +1,18 @@
+version: "3.6"
+services:
+  postgres:
+    build: .
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: jwtauthexample 
+      POPULATE_DB: 0
+      POPULATE_SCHEMA: 0
+
+volumes:
+  db_data: {}
