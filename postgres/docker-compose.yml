@@ -10,8 +10,8 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      #POSTGRES_DB: jwtauthexample 
-      POSTGRES_DBS: jwtauthexample-dev,jwtauthexample-test
+      POSTGRES_DB: jwtauthexample 
+      #POSTGRES_DBS: jwtauthexample-dev,jwtauthexample-test
       POPULATE_DBS: 0
       POPULATE_SCHEMAS: 0
 

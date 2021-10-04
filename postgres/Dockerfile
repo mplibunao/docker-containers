@@ -1,10 +1,8 @@
-FROM postgres:13.2
+# syntax=docker/dockerfile:1
+ARG POSTGRES_VERSION=13.2
+FROM "postgres:${POSTGRES_VERSION}"
 
 # Custom initialization scripts
-COPY ./create_db.sh /docker-entrypoint-initdb.d/create_multiple_db.sh
-#COPY ./create_db.sh /docker-entrypoint-initdb.d/create_db.sh
-#COPY schema.sql /schema.sql
-#COPY test_data.sql /test_data.sql
+COPY ./create_db.sh /docker-entrypoint-initdb.d/create_db.sh
 
-RUN chmod +x /docker-entrypoint-initdb.d/create_multiple_db.sh
-#RUN chmod +x /docker-entrypoint-initdb.d/create_db.sh
+RUN chmod +x /docker-entrypoint-initdb.d/create_db.sh
