@@ -28,9 +28,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         id: scan
 
-      - name: Print
-        run: "echo 'Recent updates: ${{ steps.scan.outputs.tags }}'"
-
       - name: Convert to array
         uses: actions/github-script@v6
         id: matrix-tags
@@ -40,10 +37,7 @@ jobs:
           result-encoding: string
           script: |
             const { TAGS } = process.env
-            console.log("TAG", TAGS); // eslint-disable-line no-console
-            const result = TAGS ? JSON.stringify(TAGS.split(',')) : '[]'
-            console.log("result", result); // eslint-disable-line no-console
-            return result
+            return TAGS ? JSON.stringify(TAGS.split(',')) : '[]'
 
   cd:
     needs: [scan]
