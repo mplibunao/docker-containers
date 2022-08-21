@@ -35,7 +35,7 @@ jobs:
         uses: actions/github-script@v6
         id: matrix-tags
         env:
-          TAGS: '${{ steps.scan.outputs.tags }}'
+          TAGS: steps.scan.outputs.tags
         with:
           result-encoding: string
           script: |
