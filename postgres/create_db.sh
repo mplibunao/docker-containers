@@ -1,16 +1,17 @@
 #!/bin/bash
 
 set -e
+set -u
 
 echo "Running init scripts"
-POSTGRES="psql --username ${POSTGRES_USER}"
 
 function create_user_and_database() {
 	local database=$1
 	echo "  Creating user and database '$database'"
-
-$POSTGRES <<EOSQL
-CREATE DATABASE ${database} OWNER ${POSTGRES_USER};
+	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+	    CREATE USER $database WITH PASSWORD '$POSTGRES_PASSWORD';
+	    CREATE DATABASE $database;
+	    GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
 EOSQL
 }
 

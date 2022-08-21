@@ -1,19 +1,23 @@
-version: "3.6"
+version: '3.6'
 services:
   postgres:
     build: .
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
+      # Used for all databases
       POSTGRES_USER: postgres
-      POSTGRES_DB: jwtauthexample 
-      #POSTGRES_DBS: jwtauthexample-dev,jwtauthexample-test
-      POPULATE_DBS: 0
-      POPULATE_SCHEMAS: 0
+      # User with the same name as the db is created
+      POSTGRES_MULTIPLE_DATABASES: dev,test
+    deploy:
+      resources:
+        limits:
+          cpus: '${DOCKER_POSTGRES_CPUS-0}'
+          memory: '${DOCKER_POSTGRES_MEMORY-0}'
 
   pgadmin:
     image: dpage/pgadmin4
@@ -22,7 +26,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - postgres
 

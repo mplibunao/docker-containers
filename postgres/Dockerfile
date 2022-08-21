@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 ARG POSTGRES_VERSION=13.2
 FROM "postgres:${POSTGRES_VERSION}"
 

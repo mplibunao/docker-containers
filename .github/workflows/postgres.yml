@@ -1,0 +1,85 @@
+name: postgres_cd
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  scan:
+    name: List Recent Updates
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.matrix-tags.outputs.result }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Scan Docker Repository
+        uses: dhet/scan-docker-tags-action@v1.0.1
+        with:
+          image: postgres
+          max-age-minutes: 60 * 24 * 30
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        id: scan
+
+      - name: Convert to array
+        uses: actions/github-script@v6
+        id: matrix-tags
+        env:
+          TAGS: '${{ steps.scan.outputs.tags }}'
+        with:
+          script: |
+            const { TAG } = process.env
+            const result = TAG ? JSON.stringify(TAG.split(',')) : '[]'
+            console.log("result", result); // eslint-disable-line no-console
+            return result
+
+  cd:
+    needs: [scan]
+    name: cd
+    if: needs.scan.outputs.tags != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag: ${{ fromJSON(needs.scan.outputs.tags) }}
+    steps:
+      - name: debug
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set env
+        run: |
+          echo "TAG=${{ secret.DOCKERHUB_USERNAME }}/postgres:${{ matrix.tag }}" >> $GITHUB_ENV
+
+      - name: Setup buildx
+        if: ${{ contains(github.event.comment.body, '/deploy') && github.event.issue.pull_request }}
+        uses: docker/setup-buildx-action@v2
+        id: buildx
+
+      - name: Log into registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./postgres
+          push: true
+          tags: ${{ env.TAG }}
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=registry,ref=${{ env.TAG }}:buildcache
+          cache-to: type=registry,ref=${{ env.TAG }}:buildcache,mode=max
+          build-args: |
+            POSTGRES_VERSION=${{ matrix.tag }}

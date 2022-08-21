@@ -4,23 +4,40 @@
 - Env variables can be found on the `docker-compose.yml`
 - When changing env variables, don't forget to rebuild the image by running `docker-compose build`
 
-## Populating with data
+## Environmental Variables 
 
-- You can populate the database with data by using the scripts included
-- Use `POPULATE_SCHEMA` var to set whether to create schema
-- Use `POPULATE_DB` var to set whether db is populated with data or not
-- When repopulating the db, delete the docker volume first for things to take effect
+### `POSTGRES_MULTIPLE_DATABASES`
 
-```
-docker-compose rm # doesn't seem to work
+To create multiple databases, pass a comma-separated string with the name of the databases to the env variable `POSTGRES_MULTIPLE_DATABASES`
 
-# This works
-docker volume ls
-docker volume rm <name-of-volume>
+```yaml
+environment:
+	POSTGRES_PASSWORD: postgres
+	POSTGRES_USER: postgres
+	POSTGRES_MULTIPLE_DATABASES: dev,test
 ```
 
+Aside from creating the databases, a user with the same name as the database name will be created for each database. This follows the principle of least privilege to improve security and isolation between databases or environments by not using the `postgres` user for for all databases
 
-## References
 
-- [towardsdatascience tricks for postgres and docker that will make your life easier gi](https://towardsdatascience.com/tricks-for-postgres-and-docker-that-will-make-your-life-easier-fc7bfcba5082?gi=c14b4f59d7b7)
-- [github MartinHeinz blog backend tree master postgres](https://github.com/MartinHeinz/blog-backend/tree/master/postgres)
+In the example above, a user `dev` will be created along with the `dev` database
+
+```bash
+psql -h localhost -p 5432 -U dev
+```
+
+### `POSTGRES_USER`
+
+This is the same env variable from the official postgres image for creating the specified user with superuser power. Used in conjunction with `POSTGRES_PASSWORD`
+
+### `POSTGRES_PASSWORD`
+
+This is the same env variable from the official postgres image for setting the password for the superuser.
+
+This is also used as the password for users created using `POSTGRES_MULTIPLE_DATABASES`
+
+```bash
+export PGPASSWORD=postgres
+psql -h localhost -p 5432 -U dev
+```
+
