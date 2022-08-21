@@ -23,13 +23,10 @@ jobs:
         uses: dhet/scan-docker-tags-action@v1.0.1
         with:
           image: library/postgres
-          max-age-minutes: 14400
+          max-age-minutes: 1440
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         id: scan
-
-      - name: Print
-        run: "echo 'Recent updates: ${{ steps.scan.outputs.tags }}'"
 
       - name: Convert to array
         uses: actions/github-script@v6
@@ -40,14 +37,11 @@ jobs:
           result-encoding: string
           script: |
             const { TAGS } = process.env
-            console.log("TAG", TAGS); // eslint-disable-line no-console
-            const result = TAGS ? JSON.stringify(TAGS.split(',')) : '[]'
-            console.log("result", result); // eslint-disable-line no-console
-            return result
+            return TAGS ? JSON.stringify(TAGS.split(',')) : '[]'
 
   cd:
     needs: [scan]
-    name: cd
+    name: Build and push image
     if: needs.scan.outputs.tags != '[]'
     runs-on: ubuntu-latest
     strategy:
@@ -83,7 +77,7 @@ jobs:
           push: true
           tags: ${{ env.TAG }}
           builder: ${{ steps.buildx.outputs.name }}
-          cache-from: type=registry,ref=${{ env.TAG }}buildcache
-          cache-to: type=registry,ref=${{ env.TAG }}buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/postgres:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/postgres:buildcache,mode=max
           build-args: |
             POSTGRES_VERSION=${{ matrix.tag }}
