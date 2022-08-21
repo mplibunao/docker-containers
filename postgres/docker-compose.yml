@@ -1,19 +1,16 @@
-version: "3.6"
+version: '3.6'
 services:
   postgres:
     build: .
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: jwtauthexample 
-      #POSTGRES_DBS: jwtauthexample-dev,jwtauthexample-test
-      POPULATE_DBS: 0
-      POPULATE_SCHEMAS: 0
+      POSTGRES_DB: jwtauthexample
 
   pgadmin:
     image: dpage/pgadmin4
@@ -22,7 +19,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - postgres
 
