@@ -59,7 +59,7 @@ jobs:
 
       - name: Set env
         run: |
-          echo "TAG=${{ secret.DOCKERHUB_USERNAME }}/postgres:${{ matrix.tag }}" >> $GITHUB_ENV
+          echo "TAG=${{ secrets.DOCKERHUB_USERNAME }}/postgres:${{ matrix.tag }}" >> $GITHUB_ENV
 
       - name: Setup buildx
         if: ${{ contains(github.event.comment.body, '/deploy') && github.event.issue.pull_request }}
