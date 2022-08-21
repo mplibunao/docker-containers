@@ -28,6 +28,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         id: scan
 
+      - name: Print
+        run: "echo 'Recent updates: ${{ steps.scan.outputs.tags }}'"
+
       - name: Convert to array
         uses: actions/github-script@v6
         id: matrix-tags
