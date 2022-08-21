@@ -9,8 +9,15 @@ services:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
+      # Used for all databases
       POSTGRES_USER: postgres
-      POSTGRES_DB: jwtauthexample
+      # User with the same name as the db is created
+      POSTGRES_MULTIPLE_DATABASES: dev,test
+    deploy:
+      resources:
+        limits:
+          cpus: '${DOCKER_POSTGRES_CPUS-0}'
+          memory: '${DOCKER_POSTGRES_MEMORY-0}'
 
   pgadmin:
     image: dpage/pgadmin4
