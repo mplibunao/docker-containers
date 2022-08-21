@@ -23,7 +23,7 @@ jobs:
         uses: dhet/scan-docker-tags-action@v1.0.1
         with:
           image: library/postgres
-          max-age-minutes: ${{ 60 * 24 * 30 }}
+          max-age-minutes: 43200
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         id: scan
