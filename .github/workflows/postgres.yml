@@ -83,7 +83,7 @@ jobs:
           push: true
           tags: ${{ env.TAG }}
           builder: ${{ steps.buildx.outputs.name }}
-          cache-from: type=registry,ref=${{ env.TAG }}:buildcache
-          cache-to: type=registry,ref=${{ env.TAG }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.TAG }}buildcache
+          cache-to: type=registry,ref=${{ env.TAG }}buildcache,mode=max
           build-args: |
             POSTGRES_VERSION=${{ matrix.tag }}
