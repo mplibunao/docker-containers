@@ -34,6 +34,7 @@ jobs:
         env:
           TAGS: '${{ steps.scan.outputs.tags }}'
         with:
+          result-encoding: string
           script: |
             const { TAG } = process.env
             const result = TAG ? JSON.stringify(TAG.split(',')) : '[]'
