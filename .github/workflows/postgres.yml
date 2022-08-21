@@ -35,13 +35,13 @@ jobs:
         uses: actions/github-script@v6
         id: matrix-tags
         env:
-          TAGS: steps.scan.outputs.tags
+          TAGS: '${{ steps.scan.outputs.tags }}'
         with:
           result-encoding: string
           script: |
-            const { TAG } = process.env
-            console.log("TAG", TAG); // eslint-disable-line no-console
-            const result = TAG ? JSON.stringify(TAG.split(',')) : '[]'
+            const { TAGS } = process.env
+            console.log("TAG", TAGS); // eslint-disable-line no-console
+            const result = TAGS ? JSON.stringify(TAGS.split(',')) : '[]'
             console.log("result", result); // eslint-disable-line no-console
             return result
 
