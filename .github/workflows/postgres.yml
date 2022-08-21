@@ -47,7 +47,7 @@ jobs:
 
   cd:
     needs: [scan]
-    name: cd
+    name: Build and push image
     if: needs.scan.outputs.tags != '[]'
     runs-on: ubuntu-latest
     strategy:
