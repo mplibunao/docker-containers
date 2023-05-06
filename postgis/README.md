@@ -69,7 +69,7 @@ psql -h localhost -p 5432 -U dev
 
 ## Building the image yourself
 
-You can see the repo at [github mplibunao docker containers tree master postgres](https://github.com/mplibunao/docker-containers/tree/master/postgres) and build the image yourself 
+You can see the repo at [github mplibunao docker containers tree master postgis](https://github.com/mplibunao/docker-containers/tree/master/postgis) and build the image yourself 
 
 - Run `docker-compose up` to build and run the container
 - Env variables can be found on the `docker-compose.yml`
